@@ -10,7 +10,7 @@ export const MainLayout = () => {
       <Header />
 
       <Container className="flex-grow">
-        <main className="flex-grow">
+        <main className="flex-grow pt-28 pb-12">
           <Outlet />
         </main>
       </Container>

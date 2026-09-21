@@ -15,10 +15,13 @@ import { toast } from "sonner";
 export const Dashboard = () => {
   const [interviews, setInterviews] = useState<Interview[]>([]);
   const [loading, setLoading] = useState(false);
-  const { userId } = useAuth();
+  const [error, setError] = useState("");
+  const { isLoaded, userId } = useAuth();
 
   useEffect(() => {
+    if (!isLoaded || !userId) return;
     setLoading(true);
+    setError("");
     const interviewQuery = query(
       collection(db, "interviews"),
       where("userId", "==", userId)
@@ -34,20 +37,23 @@ export const Dashboard = () => {
             ...doc.data(),
           };
         }) as Interview[];
+        interviewList.sort((a, b) => {
+          const aTime = a.createdAt?.toMillis?.() ?? 0;
+          const bTime = b.createdAt?.toMillis?.() ?? 0;
+          return bTime - aTime;
+        });
         setInterviews(interviewList);
         setLoading(false);
       },
-      (error) => {
-        console.log("Error on fetching : ", error);
-        toast.error("Error..", {
-          description: "SOmething went wrong.. Try again later..",
-        });
+      () => {
+        setError("Could not load your interviews. Please try again.");
+        toast.error("Could not load interviews");
         setLoading(false);
       }
     );
 
     return () => unsubscribe();
-  }, [userId]);
+  }, [isLoaded, userId]);
 
   return (
     <>
@@ -72,6 +78,8 @@ export const Dashboard = () => {
           Array.from({ length: 6 }).map((_, index) => (
             <Skeleton key={index} className="h-24 md:h-32 rounded-md" />
           ))
+        ) : error ? (
+          <div className="md:col-span-3 flex h-96 items-center justify-center text-center text-red-600">{error}</div>
         ) : interviews.length > 0 ? (
           interviews.map((interview) => (
             <InterviewPin key={interview.id} interview={interview} />

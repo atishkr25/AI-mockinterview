@@ -22,7 +22,7 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import { chatSession } from "@/scripts";
+import { generateJson } from "@/scripts";
 import {
   addDoc,
   collection,
@@ -59,7 +59,7 @@ export const FormMockInterview = ({ initialData }: FormMockInterviewProps) => {
   const { isValid, isSubmitting } = form.formState;
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { userId } = useAuth();
+  const { isLoaded, userId } = useAuth();
 
   const title = initialData
     ? initialData.position
@@ -70,29 +70,6 @@ export const FormMockInterview = ({ initialData }: FormMockInterviewProps) => {
   const toastMessage = initialData
     ? { title: "Updated..!", description: "Changes saved successfully..." }
     : { title: "Created..!", description: "New Mock Interview created..." };
-
-  const cleanAiResponse = (responseText: string) => {
-    // Step 1: Trim any surrounding whitespace
-    let cleanText = responseText.trim();
-
-    // Step 2: Remove any occurrences of "json" or code block symbols (``` or `)
-    cleanText = cleanText.replace(/(json|```|`)/g, "");
-
-    // Step 3: Extract a JSON array by capturing text between square brackets
-    const jsonArrayMatch = cleanText.match(/\[.*\]/s);
-    if (jsonArrayMatch) {
-      cleanText = jsonArrayMatch[0];
-    } else {
-      throw new Error("No JSON array found in response");
-    }
-
-    // Step 4: Parse the clean JSON text into an array of objects
-    try {
-      return JSON.parse(cleanText);
-    } catch (error) {
-      throw new Error("Invalid JSON format: " + (error as Error)?.message);
-    }
-  };
 
   const generateAiResponse = async (data: FormData) => {
     const prompt = `
@@ -112,15 +89,30 @@ export const FormMockInterview = ({ initialData }: FormMockInterviewProps) => {
         The questions should assess skills in ${data?.techStack} development and best practices, problem-solving, and experience handling complex requirements. Please format the output strictly as an array of JSON objects without any additional labels, code blocks, or explanations. Return only the JSON array with questions and answers.
         `;
 
-    const aiResult = await chatSession.sendMessage(prompt);
-    const cleanedResponse = cleanAiResponse(aiResult.response.text());
-
-    return cleanedResponse;
+    const questions = await generateJson<unknown>(prompt);
+    if (
+      !Array.isArray(questions) ||
+      questions.length === 0 ||
+      questions.some(
+        (question) =>
+          !question ||
+          typeof question !== "object" ||
+          typeof (question as { question?: unknown }).question !== "string" ||
+          typeof (question as { answer?: unknown }).answer !== "string"
+      )
+    ) {
+      throw new Error("Gemini returned an invalid question list");
+    }
+    return questions as { question: string; answer: string }[];
   };
 
   const onSubmit = async (data: FormData) => {
     try {
       setLoading(true);
+
+      if (!isLoaded || !userId) {
+        throw new Error("Your account is still loading. Please try again.");
+      }
 
       if (initialData) {
         // update

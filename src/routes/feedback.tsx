@@ -31,35 +31,34 @@ export const Feedback = () => {
   const [interview, setInterview] = useState<Interview | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [feedbacks, setFeedbacks] = useState<UserAnswer[]>([]);
+  const [summary, setSummary] = useState("");
+  const [error, setError] = useState("");
   const [activeFeed, setActiveFeed] = useState("");
-  const { userId } = useAuth();
+  const { isLoaded, userId } = useAuth();
   const navigate = useNavigate();
 
-  if (!interviewId) {
-    navigate("/generate", { replace: true });
-  }
   useEffect(() => {
-    if (interviewId) {
+    if (!interviewId) {
+      navigate("/generate", { replace: true });
+      return;
+    }
+    if (isLoaded && userId) {
       const fetchInterview = async () => {
-        if (interviewId) {
-          try {
-            const interviewDoc = await getDoc(
-              doc(db, "interviews", interviewId)
-            );
-            if (interviewDoc.exists()) {
-              setInterview({
-                id: interviewDoc.id,
-                ...interviewDoc.data(),
-              } as Interview);
-            }
-          } catch (error) {
-            console.log(error);
+        try {
+          const interviewDoc = await getDoc(doc(db, "interviews", interviewId));
+          if (interviewDoc.exists() && interviewDoc.data().userId === userId) {
+            setInterview({ id: interviewDoc.id, ...interviewDoc.data() } as Interview);
+          } else {
+            throw new Error("Interview not found");
           }
+        } catch {
+          setError("We could not load this interview.");
         }
       };
 
       const fetchFeedbacks = async () => {
         setIsLoading(true);
+        setError("");
         try {
           const querSanpRef = query(
             collection(db, "userAnswers"),
@@ -74,11 +73,10 @@ export const Feedback = () => {
           });
 
           setFeedbacks(interviewData);
-        } catch (error) {
-          console.log(error);
-          toast("Error", {
-            description: "Something went wrong. Please try again later..",
-          });
+          setSummary(String(interviewData[0]?.summary || ""));
+        } catch {
+          setError("We could not load your feedback. Please try again.");
+          toast.error("Could not load feedback");
         } finally {
           setIsLoading(false);
         }
@@ -86,7 +84,7 @@ export const Feedback = () => {
       fetchInterview();
       fetchFeedbacks();
     }
-  }, [interviewId, navigate, userId]);
+  }, [interviewId, isLoaded, navigate, userId]);
 
   //   calculate the ratings out of 10
 
@@ -103,6 +101,10 @@ export const Feedback = () => {
 
   if (isLoading) {
     return <LoaderPage className="w-full h-[70vh]" />;
+  }
+
+  if (error) {
+    return <div className="py-20 text-center text-red-600">{error}</div>;
   }
 
   return (
@@ -127,6 +129,13 @@ export const Feedback = () => {
         <span className="text-gray-700 text-sm font-medium">Overall Rating:</span>
         <span className="text-primary font-bold text-xl">{overAllRating} / 10</span>
       </div>
+
+      {summary && (
+        <div className="rounded-2xl border border-gray-100 bg-white p-5 text-gray-600 shadow-sm">
+          <p className="text-sm font-semibold text-navy">Overall summary</p>
+          <p className="mt-2 leading-relaxed">{summary}</p>
+        </div>
+      )}
 
       {interview && <InterviewPin interview={interview} onMockPage />}
 
@@ -155,14 +164,14 @@ export const Feedback = () => {
               <AccordionContent className="px-6 py-6 bg-white space-y-4">
                 <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
                   <Star className="w-5 h-5 text-primary fill-primary" />
-                  Rating: <span className="text-primary">{feed.rating} / 10</span>
+                  Rating: <span className="text-primary">{feed.score ?? feed.rating} / 10</span>
                 </div>
 
                 <Card className="border-none space-y-3 p-5 bg-emerald-50 rounded-2xl">
                   <CardTitle className="flex items-center text-base font-semibold text-emerald-800">
-                    <CircleCheck className="mr-2 w-5 h-5 text-emerald-600" /> Expected Answer
+                    <CircleCheck className="mr-2 w-5 h-5 text-emerald-600" /> What went well
                   </CardTitle>
-                  <CardDescription className="text-gray-700 leading-relaxed">{feed.correct_ans}</CardDescription>
+                  <CardDescription className="text-gray-700 leading-relaxed">{feed.wentWell || "No strengths returned."}</CardDescription>
                 </Card>
 
                 <Card className="border-none space-y-3 p-5 bg-amber-50 rounded-2xl">
@@ -176,7 +185,11 @@ export const Feedback = () => {
                   <CardTitle className="flex items-center text-base font-semibold text-primary/80">
                     <CircleCheck className="mr-2 w-5 h-5 text-primary" /> AI Feedback
                   </CardTitle>
-                  <CardDescription className="text-gray-700 leading-relaxed">{feed.feedback}</CardDescription>
+                  <CardDescription className="text-gray-700 leading-relaxed">{feed.improve || feed.feedback}</CardDescription>
+                </Card>
+                <Card className="border-none space-y-3 p-5 bg-sky-50 rounded-2xl">
+                  <CardTitle className="text-base font-semibold text-sky-800">Ideal answer</CardTitle>
+                  <CardDescription className="text-gray-700 leading-relaxed">{feed.idealAnswer || feed.correct_ans}</CardDescription>
                 </Card>
               </AccordionContent>
             </AccordionItem>

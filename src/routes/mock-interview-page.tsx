@@ -10,29 +10,35 @@ import { CustomBreadCrumb } from "@/components/custom-bread-crumb";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Lightbulb } from "lucide-react";
 import { QuestionSection } from "@/components/question-section";
+import { useAuth } from "@clerk/clerk-react";
+import { toast } from "sonner";
 
 export const MockInterviewPage = () => {
   const { interviewId } = useParams<{ interviewId: string }>();
   const [interview, setInterview] = useState<Interview | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const { isLoaded, userId } = useAuth();
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!isLoaded || !userId || !interviewId) return;
     setIsLoading(true);
     const fetchInterview = async () => {
       if (interviewId) {
         try {
           const interviewDoc = await getDoc(doc(db, "interviews", interviewId));
-          if (interviewDoc.exists()) {
+          if (interviewDoc.exists() && interviewDoc.data().userId === userId) {
             setInterview({
               id: interviewDoc.id,
               ...interviewDoc.data(),
             } as Interview);
           }
-        } catch (error) {
-          console.log(error);
+        } catch {
+          setError("Could not load this interview.");
+          toast.error("Could not load interview");
         } finally {
           setIsLoading(false);
         }
@@ -40,7 +46,7 @@ export const MockInterviewPage = () => {
     };
 
     fetchInterview();
-  }, [interviewId]);
+  }, [interviewId, isLoaded, userId]);
 
   useEffect(() => {
     if (!isLoading && !interviewId) {
@@ -53,7 +59,7 @@ export const MockInterviewPage = () => {
   }
 
   if (!interview) {
-    return null;
+    return error ? <div className="py-20 text-center text-red-600">{error}</div> : null;
   }
 
   return (

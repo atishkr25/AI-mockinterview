@@ -32,4 +32,10 @@ export interface UserAnswer {
   userId: string;
   createdAt: Timestamp;
   updateAt: Timestamp;
+  questionId?: string;
+  score?: number;
+  wentWell?: string;
+  improve?: string;
+  idealAnswer?: string;
+  summary?: string;
 }
