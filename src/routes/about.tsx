@@ -1,106 +1,81 @@
-import { ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
-import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { BadgeEyebrow } from "@/components/badge-eyebrow";
-import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/section-heading";
-
-const principles = [
-  {
-    title: "Practice with purpose",
-    description: "Every session is built around the role you want, so your preparation stays focused and relevant.",
-  },
-  {
-    title: "Feedback you can use",
-    description: "Clear scores and practical next steps help you turn a vague weakness into a confident answer.",
-  },
-  {
-    title: "Confidence through repetition",
-    description: "The more naturally you can explain your thinking, the more present you can be in the real interview.",
-  },
-];
 
 export const AboutUs = () => {
   return (
-    <main className="w-full overflow-hidden">
-      <section className="relative bg-[#FFF9F6] px-6 pb-20 pt-20 md:pb-28 md:pt-28">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
-          <div>
-            <BadgeEyebrow className="inline-flex items-center gap-2">
-              <Sparkles className="h-3.5 w-3.5" />
-              Built for your next opportunity
-            </BadgeEyebrow>
-            <SectionHeading
-              as="h1"
-              title="Meet the practice room that moves with you."
-              accent=""
-              className="mt-6 max-w-3xl text-4xl leading-[1.08] md:text-6xl"
-            />
-            <p className="mt-6 max-w-xl text-lg leading-[1.75] text-gray-500">
-              Lindy helps ambitious candidates prepare with less guesswork and more
-              useful practice. Show up, answer honestly, and leave every session
-              knowing what to do next.
-            </p>
-            <Button asChild size="lg" className="mt-8 px-8 shadow-glow">
-              <Link to="/generate">
-                Start practicing <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
+    <div className="flex flex-col w-full bg-white overflow-x-hidden min-h-[calc(100vh-100px)]">
+      
+      {/* ─── ABOUT HERO ─── */}
+      <section className="flex flex-col items-center text-center px-6 pt-32 pb-20 max-w-4xl mx-auto w-full">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <BadgeEyebrow className="inline-flex items-center gap-2 mb-8 normal-case tracking-normal text-sm">
+            Our Mission
+          </BadgeEyebrow>
+        </motion.div>
 
-          <div className="relative">
-            <div className="absolute -inset-5 rounded-[32px] bg-brand/10 blur-2xl" />
-            <div className="relative rounded-[28px] border border-white bg-white p-5 shadow-[0_24px_70px_rgba(17,24,39,0.12)] md:p-7">
-              <div className="flex items-center justify-between border-b border-gray-100 pb-5">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gray-400">Your practice loop</p>
-                  <p className="mt-1 text-xl font-semibold text-navy">Prepare. Practice. Progress.</p>
-                </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-brand">
-                  <Sparkles className="h-4 w-4" />
-                </div>
-              </div>
-              <div className="space-y-3 pt-5">
-                {["Choose your role", "Answer in your own way", "Improve with clear feedback"].map((item, index) => (
-                  <div key={item} className="flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-4">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">
-                      {index + 1}
-                    </span>
-                    <span className="text-sm font-medium text-navy">{item}</span>
-                    <CheckCircle2 className="ml-auto h-4 w-4 text-emerald-500" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <SectionHeading
+            as="h1"
+            title="Practice shouldn't happen "
+            accent="in the actual interview."
+            className="text-5xl md:text-7xl leading-[1.06] tracking-[-0.03em] mx-auto"
+          />
+        </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.17, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-8 text-gray-500 text-lg md:text-xl max-w-2xl leading-[1.65] font-normal"
+        >
+          We built Lindy because the traditional way of preparing for interviews—staring at a mirror or reading static lists of questions—is fundamentally broken.
+        </motion.p>
       </section>
 
-      <section className="px-6 py-24 md:py-28">
-        <div className="mx-auto max-w-6xl">
-          <div className="max-w-2xl">
-            <BadgeEyebrow>Why Lindy</BadgeEyebrow>
-            <SectionHeading
-              title="A calmer way to get ready for the room."
-              accent=""
-              className="mt-5 text-3xl md:text-4xl"
-            />
-            <p className="mt-5 text-lg leading-[1.75] text-gray-500">
-              Great interviews are rarely about having a perfect answer on the first
-              try. They come from deliberate practice, honest reflection, and a plan
-              for the next attempt.
+      {/* ─── THE STORY (Modular Asymmetric Layout) ─── */}
+      <section className="px-6 py-24 bg-[#FAFAFA] border-t border-gray-100 flex-1">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-[1fr_1fr] gap-12 md:gap-24 items-start">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="md:sticky md:top-32"
+          >
+            <h2 className="text-3xl md:text-4xl font-semibold text-navy leading-tight tracking-tight">
+              We're changing how ambitious professionals prepare for their next big leap.
+            </h2>
+          </motion.div>
+          
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="space-y-8 text-lg text-gray-500 leading-relaxed font-normal"
+          >
+            <p>
+              Interviews are high-stakes, nerve-wracking, and often opaque. For too long, candidates have had to rely on friends for mock interviews, which lack technical depth, or pay exorbitant fees for professional coaching.
             </p>
-          </div>
-          <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-3">
-            {principles.map((principle, index) => (
-              <div key={principle.title} className="rounded-2xl border border-gray-100 bg-white p-6 shadow-soft">
-                <span className="font-mono text-xs font-bold text-brand/70">0{index + 1}</span>
-                <h2 className="mt-8 text-lg font-semibold text-navy">{principle.title}</h2>
-                <p className="mt-3 text-sm leading-[1.75] text-gray-500">{principle.description}</p>
-              </div>
-            ))}
-          </div>
+            <p>
+              We realized that recent advancements in AI could perfectly simulate the pressure, variability, and specific technical requirements of top-tier company interviews. But it had to feel human, and the feedback had to be instantaneous and brutally accurate.
+            </p>
+            <p>
+              That's why we created Lindy. It's not just a tool to practice answering questions; it's a dynamic feedback loop designed to catch your verbal ticks, analyze your problem-solving frameworks, and build your confidence through deliberate repetition.
+            </p>
+          </motion.div>
         </div>
       </section>
-    </main>
+    </div>
   );
 };
+

@@ -19,11 +19,11 @@ const InfiniteMarquee = () => (
     <div className="flex w-max" style={{ animation: "scroll-x 30s linear infinite" }}>
       {/* Render 4 copies so the seam is never visible at any viewport */}
       {[...Array(4)].map((_, i) => (
-        <div key={i} className="flex items-center gap-12 md:gap-16 pr-12 md:pr-16">
+        <div key={i} className="flex items-center gap-16 md:gap-24 pr-16 md:pr-24">
           {COMPANIES.map((b) => (
             <span
               key={`${i}-${b}`}
-              className="text-base md:text-lg font-semibold text-gray-400 tracking-tight whitespace-nowrap select-none"
+              className="text-xl md:text-2xl font-semibold text-gray-400/80 tracking-tight whitespace-nowrap select-none"
             >
               {b}
             </span>
@@ -132,8 +132,8 @@ const HomePage = () => {
       </section>
 
       {/* ─── TRUSTED BY (Infinite Marquee) ─── */}
-      <section className="flex flex-col items-center py-10 border-y border-gray-100">
-        <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-[0.12em] mb-7 px-4 text-center">
+      <section className="flex flex-col items-center py-16 border-y border-gray-100">
+        <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-[0.12em] mb-8 px-4 text-center">
           Candidates who landed roles at
         </p>
         <div className="hover-pause w-full">
@@ -142,7 +142,7 @@ const HomePage = () => {
       </section>
 
       {/* ─── FEATURE SPOTLIGHT ─── */}
-      <section id="features" className="max-w-6xl mx-auto px-6 py-24 scroll-mt-24">
+      <section id="features" className="max-w-6xl mx-auto px-6 pt-20 pb-24 scroll-mt-24">
         <div className="rounded-[28px] bg-navy p-6 md:p-10 lg:p-14 grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-16 items-center overflow-hidden">
         <motion.div
           initial={{ opacity: 0, x: -24 }}
@@ -332,7 +332,7 @@ const HomePage = () => {
       </section>
 
       {/* ─── CTA ─── */}
-      <section className="bg-navy py-24 px-6 text-center">
+      <section className="bg-navy py-16 px-6 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -348,7 +348,7 @@ const HomePage = () => {
             Join thousands of candidates who practice with Lindy and land the
             roles they deserve.
           </p>
-          <Button asChild size="lg" className="mt-9 px-9 shadow-glow hover:-translate-y-0.5">
+          <Button asChild size="lg" className="mt-8 px-9 shadow-glow hover:-translate-y-0.5">
             <Link to="/generate">
               <Sparkles className="w-4 h-4" /> Start Practicing Free
             </Link>

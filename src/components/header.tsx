@@ -11,6 +11,7 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const [hoveredPath, setHoveredPath] = useState<string | null>(null);
   const { scrollY } = useScroll();
   const location = useLocation();
   const navigate = useNavigate();
@@ -99,31 +100,44 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 group outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-md">
-          <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center transition-transform group-hover:scale-105">
-            <Sparkles className="w-4 h-4 text-white" />
-          </div>
-          <span className="font-display font-semibold text-navy text-xl tracking-tight">
+          <style>{`
+            @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+          `}</style>
+          <span 
+            className="text-navy text-3xl tracking-tight transition-transform group-hover:scale-105"
+            style={{ fontFamily: "'Dancing Script', cursive", fontWeight: 700 }}
+          >
             Lindy
           </span>
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-2 relative">
+        <nav 
+          className="hidden md:flex items-center gap-1 relative"
+          onMouseLeave={() => setHoveredPath(null)}
+        >
           {navLinks.map((link) => {
             const active = isActive(link.href);
+            const isHovered = hoveredPath === link.href;
+            const showIndicator = isHovered || (hoveredPath === null && active);
+            
             return (
-              <div key={link.href} className="relative">
-                {active && (
+              <div 
+                key={link.href} 
+                className="relative"
+                onMouseEnter={() => setHoveredPath(link.href)}
+              >
+                {showIndicator && (
                   <motion.div
                     layoutId="nav-indicator"
-                    className="absolute inset-0 bg-gray-100/80 rounded-full"
+                    className="absolute inset-0 bg-gray-100 rounded-full"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
                 <button
                   onClick={() => handleNavClick(link.href)}
-                  className={`relative px-4 py-2 rounded-full text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand ${
-                    active ? "text-navy" : "text-muted-foreground hover:text-navy"
+                  className={`relative block px-4 py-2 rounded-full text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand ${
+                    showIndicator ? "text-navy" : "text-gray-500"
                   }`}
                 >
                   {link.label}
@@ -131,25 +145,34 @@ const Header = () => {
               </div>
             );
           })}
-          {userId && (
-            <div className="relative ml-2">
-              {isActive("/generate") && (
-                <motion.div
-                  layoutId="nav-indicator"
-                  className="absolute inset-0 bg-gray-100/80 rounded-full"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                />
-              )}
-              <Link
-                to="/generate"
-                className={`relative px-4 py-2 rounded-full text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand ${
-                  isActive("/generate") ? "text-navy" : "text-muted-foreground hover:text-navy"
-                }`}
+          
+          {userId && (() => {
+            const active = isActive("/generate");
+            const isHovered = hoveredPath === "/generate";
+            const showIndicator = isHovered || (hoveredPath === null && active);
+            return (
+              <div 
+                className="relative ml-1"
+                onMouseEnter={() => setHoveredPath("/generate")}
               >
-                Dashboard
-              </Link>
-            </div>
-          )}
+                {showIndicator && (
+                  <motion.div
+                    layoutId="nav-indicator"
+                    className="absolute inset-0 bg-gray-100 rounded-full"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+                <Link
+                  to="/generate"
+                  className={`relative block px-4 py-2 rounded-full text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand ${
+                    showIndicator ? "text-navy" : "text-gray-500"
+                  }`}
+                >
+                  Dashboard
+                </Link>
+              </div>
+            );
+          })()}
         </nav>
 
         {/* Right Side / Auth */}
