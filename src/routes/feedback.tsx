@@ -111,88 +111,72 @@ export const Feedback = () => {
         <CustomBreadCrumb
           breadCrumbPage={"Feedback"}
           breadCrumpItems={[
-            { label: "Mock Interviews", link: "/generate" },
-            {
-              label: `${interview?.position}`,
-              link: `/generate/interview/${interview?.id}`,
-            },
+            { label: "My Interviews", link: "/generate" },
+            { label: `${interview?.position}`, link: `/generate/interview/${interview?.id}` },
           ]}
         />
       </div>
 
       <Headings
-        title="Congratulations !"
-        description="Your personalized feedback is now available. Dive in to see your strengths, areas for improvement, and tips to help you ace your next interview."
+        title="Congratulations!"
+        description="Your personalized Lindy AI feedback is now available. Dive in to see your strengths and areas for improvement."
       />
 
-      <p className="text-base text-muted-foreground">
-        Your overall interview ratings :{" "}
-        <span className="text-emerald-500 font-semibold text-xl">
-          {overAllRating} / 10
-        </span>
-      </p>
+      <div className="flex items-center gap-2 p-4 bg-primary/5 border border-primary/10 rounded-2xl w-fit">
+        <Star className="w-5 h-5 text-primary fill-primary" />
+        <span className="text-gray-700 text-sm font-medium">Overall Rating:</span>
+        <span className="text-primary font-bold text-xl">{overAllRating} / 10</span>
+      </div>
 
       {interview && <InterviewPin interview={interview} onMockPage />}
 
       <Headings title="Interview Feedback" isSubHeading />
 
       {feedbacks && (
-        <Accordion type="single" collapsible className="space-y-6">
+        <Accordion type="single" collapsible className="space-y-4">
           {feedbacks.map((feed) => (
             <AccordionItem
               key={feed.id}
               value={feed.id}
-              className="border rounded-lg shadow-md"
+              className="border border-gray-100 rounded-3xl shadow-sm overflow-hidden"
             >
               <AccordionTrigger
                 onClick={() => setActiveFeed(feed.id)}
                 className={cn(
-                  "px-5 py-3 flex items-center justify-between text-base rounded-t-lg transition-colors hover:no-underline",
+                  "px-6 py-4 flex items-center justify-between text-base transition-colors hover:no-underline",
                   activeFeed === feed.id
-                    ? "bg-gradient-to-r from-purple-50 to-blue-50"
+                    ? "bg-primary/5"
                     : "hover:bg-gray-50"
                 )}
               >
-                <span>{feed.question}</span>
+                <span className="text-left font-medium">{feed.question}</span>
               </AccordionTrigger>
 
-              <AccordionContent className="px-5 py-6 bg-white rounded-b-lg space-y-5 shadow-inner">
-                <div className="text-lg font-semibold to-gray-700">
-                  <Star className="inline mr-2 text-yellow-400" />
-                  Rating : {feed.rating}
+              <AccordionContent className="px-6 py-6 bg-white space-y-4">
+                <div className="flex items-center gap-2 text-base font-semibold text-gray-800">
+                  <Star className="w-5 h-5 text-primary fill-primary" />
+                  Rating: <span className="text-primary">{feed.rating} / 10</span>
                 </div>
 
-                <Card className="border-none space-y-3 p-4 bg-green-50 rounded-lg shadow-md">
-                  <CardTitle className="flex items-center text-lg">
-                    <CircleCheck className="mr-2 text-green-600" />
-                    Expected Answer
+                <Card className="border-none space-y-3 p-5 bg-emerald-50 rounded-2xl">
+                  <CardTitle className="flex items-center text-base font-semibold text-emerald-800">
+                    <CircleCheck className="mr-2 w-5 h-5 text-emerald-600" /> Expected Answer
                   </CardTitle>
-
-                  <CardDescription className="font-medium text-gray-700">
-                    {feed.correct_ans}
-                  </CardDescription>
+                  <CardDescription className="text-gray-700 leading-relaxed">{feed.correct_ans}</CardDescription>
                 </Card>
 
-                <Card className="border-none space-y-3 p-4 bg-yellow-50 rounded-lg shadow-md">
-                  <CardTitle className="flex items-center text-lg">
-                    <CircleCheck className="mr-2 text-yellow-600" />
-                    Your Answer
+                <Card className="border-none space-y-3 p-5 bg-amber-50 rounded-2xl">
+                  <CardTitle className="flex items-center text-base font-semibold text-amber-800">
+                    <CircleCheck className="mr-2 w-5 h-5 text-amber-600" /> Your Answer
                   </CardTitle>
-
-                  <CardDescription className="font-medium text-gray-700">
-                    {feed.user_ans}
-                  </CardDescription>
+                  <CardDescription className="text-gray-700 leading-relaxed">{feed.user_ans}</CardDescription>
                 </Card>
 
-                <Card className="border-none space-y-3 p-4 bg-red-50 rounded-lg shadow-md">
-                  <CardTitle className="flex items-center text-lg">
-                    <CircleCheck className="mr-2 text-red-600" />
-                    Feedback
+                <Card className="border-none space-y-3 p-5 bg-primary/5 rounded-2xl">
+                  <CardTitle className="flex items-center text-base font-semibold text-primary/80">
+                    <CircleCheck className="mr-2 w-5 h-5 text-primary" /> AI Feedback
                   </CardTitle>
-
-                  <CardDescription className="font-medium text-gray-700">
-                    {feed.feedback}
-                  </CardDescription>
+                  <CardDescription className="text-gray-700 leading-relaxed">{feed.feedback}</CardDescription>
                 </Card>
               </AccordionContent>
             </AccordionItem>

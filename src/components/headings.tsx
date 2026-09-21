@@ -15,9 +15,10 @@ export const Headings = ({
     <div>
       <h2
         className={cn(
-          "text-2xl md:text-3xl text-gray-800 font-semibold font-sans",
+          "text-2xl md:text-3xl text-gray-800 font-semibold font-serif tracking-tight",
           isSubHeading && "text-lg md:text-xl"
         )}
+        style={{ fontFamily: "'Playfair Display', serif" }}
       >
         {title}
       </h2>

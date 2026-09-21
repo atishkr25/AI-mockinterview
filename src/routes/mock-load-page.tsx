@@ -41,72 +41,72 @@ export const MockLoadPage = () => {
     };
 
     fetchInterview();
-  }, [interviewId, navigate]);
+  }, [interviewId]);
+
+  useEffect(() => {
+    if (!isLoading && !interviewId) {
+      navigate("/generate", { replace: true });
+    }
+  }, [isLoading, interviewId, navigate]);
 
   if (isLoading) {
     return <LoaderPage className="w-full h-[70vh]" />;
   }
 
-  if (!interviewId) {
-    navigate("/generate", { replace: true });
-  }
-
   if (!interview) {
-    navigate("/generate", { replace: true });
+    return null;
   }
 
   return (
-    <div className="flex flex-col w-full gap-8 py-5">
+    <div className="flex flex-col w-full gap-6 py-5">
       <div className="flex items-center justify-between w-full gap-2">
         <CustomBreadCrumb
           breadCrumbPage={interview?.position || ""}
-          breadCrumpItems={[{ label: "Mock Interviews", link: "/generate" }]}
+          breadCrumpItems={[{ label: "My Interviews", link: "/generate" }]}
         />
-
         <Link to={`/generate/interview/${interviewId}/start`}>
-          <Button size={"sm"}>
-            Start <Sparkles />
+          <Button size={"sm"} className="rounded-full px-6">
+            Start <Sparkles className="ml-2 w-4 h-4" />
           </Button>
         </Link>
       </div>
 
       {interview && <InterviewPin interview={interview} onMockPage />}
 
-      <Alert className="bg-yellow-100/50 border-yellow-200 p-4 rounded-lg flex items-start gap-3 -mt-3">
-        <Lightbulb className="h-5 w-5 text-yellow-600" />
+      <Alert className="bg-amber-50 border-amber-200 rounded-2xl p-5 flex items-start gap-3">
+        <Lightbulb className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
         <div>
-          <AlertTitle className="text-yellow-800 font-semibold">
-            Important Information
-          </AlertTitle>
-          <AlertDescription className="text-sm text-yellow-700 mt-1">
-            Please enable your webcam and microphone to start the AI-generated
-            mock interview. The interview consists of five questions. You’ll
-            receive a personalized report based on your responses at the end.{" "}
-            <br />
-            <br />
-            <span className="font-medium">Note:</span> Your video is{" "}
-            <strong>never recorded</strong>. You can disable your webcam at any
-            time.
+          <AlertTitle className="text-amber-800 font-semibold">Before You Begin</AlertTitle>
+          <AlertDescription className="text-sm text-amber-700 mt-1 leading-relaxed">
+            Enable your webcam and microphone to start the Lindy AI session. You'll answer 5 questions and receive a personalized feedback report.
+            <br /><br />
+            <span className="font-medium">Note:</span> Your video is <strong>never recorded</strong>.
           </AlertDescription>
         </div>
       </Alert>
 
-      <div className="flex items-center justify-center w-full h-full">
-        <div className="w-full h-[400px] md:w-96 flex flex-col items-center justify-center border p-4 bg-gray-50 rounded-md">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-full max-w-md h-[380px] flex flex-col items-center justify-center border border-gray-100 bg-white/80 backdrop-blur-sm shadow-[0_8px_30px_rgba(0,0,0,0.06)] rounded-3xl p-4">
           {isWebCamEnabled ? (
             <WebCam
               onUserMedia={() => setIsWebCamEnabled(true)}
               onUserMediaError={() => setIsWebCamEnabled(false)}
-              className="w-full h-full object-cover rounded-md"
+              className="w-full h-full object-cover rounded-2xl"
             />
           ) : (
-            <WebcamIcon className="min-w-24 min-h-24 text-muted-foreground" />
+            <div className="flex flex-col items-center gap-4 text-gray-400">
+              <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center">
+                <WebcamIcon className="w-10 h-10 text-gray-400" />
+              </div>
+              <p className="text-sm">Webcam is off</p>
+            </div>
           )}
         </div>
-      </div>
-
-      <div className="flex items-center justify-center">
-        <Button onClick={() => setIsWebCamEnabled(!isWebCamEnabled)}>
+        <Button
+          onClick={() => setIsWebCamEnabled(!isWebCamEnabled)}
+          variant={isWebCamEnabled ? "outline" : "default"}
+          className="rounded-full px-8"
+        >
           {isWebCamEnabled ? "Disable Webcam" : "Enable Webcam"}
         </Button>
       </div>

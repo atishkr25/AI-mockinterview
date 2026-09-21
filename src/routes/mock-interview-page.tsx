@@ -40,18 +40,20 @@ export const MockInterviewPage = () => {
     };
 
     fetchInterview();
-  }, [interviewId, navigate]);
+  }, [interviewId]);
+
+  useEffect(() => {
+    if (!isLoading && !interviewId) {
+      navigate("/generate", { replace: true });
+    }
+  }, [isLoading, interviewId, navigate]);
 
   if (isLoading) {
     return <LoaderPage className="w-full h-[70vh]" />;
   }
 
-  if (!interviewId) {
-    navigate("/generate", { replace: true });
-  }
-
   if (!interview) {
-    navigate("/generate", { replace: true });
+    return null;
   }
 
   return (
