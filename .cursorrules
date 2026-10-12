@@ -1,0 +1,15 @@
+# Project Rules & Architecture
+
+## Architecture
+- `client/`: AI Mock Interview (React + TS + Vite + Tailwind + shadcn). Keep existing UI/styles intact.
+- `server/`: MERN Backend (Express + Mongoose + JWT).
+- Do not use old MERN client; only use the backend.
+- Security: Gemini API key strictly on server only. Never expose AI keys on client.
+
+## Development Rules
+1. Do only the current stage.
+2. Read only files needed.
+3. No refactors outside scope.
+4. Keep existing UI/styles.
+5. Validate inputs.
+6. Response format: Reply with changed files list, max 5 lines, no explanations.
